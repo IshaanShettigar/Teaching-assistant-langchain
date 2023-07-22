@@ -1,0 +1,6 @@
+.vscode
+run_app.bat
+setup_env.bat
+pipfile
+pipfile.lock
+models

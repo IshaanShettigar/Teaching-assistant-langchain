@@ -1,0 +1,5 @@
+This is using pipenv which didnt work so im using conda
+To activate this project's virtualenv, run pipenv shell.
+Alternatively, run a command inside the virtualenv with pipenv run.
+
+It took 30 mins to setup minconda terminal my GOD
