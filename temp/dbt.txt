@@ -1,0 +1,80 @@
+Index Structures
+
+It is not sufficient simply to scatter the records that represent tuples of a relation
+among various blocks. To see why, think how we would answer the simple query
+SELECT * FROM R. We would have to examine every block in the storage system
+to find the tuples of R. A better idea is to reserve some blocks, perhaps several
+whole cylinders, for R. Now, at least we can find the tuples of R without
+scanning the entire data store.
+However, this organization offers little help for a query like
+SELECT * FROM R WHERE a=10;
+Section 8.4 introduced us to the importance of creating indexes to speed up
+queries that specify values for one or more attributes. As suggested in Fig. 14.1,
+an index is any data structure that takes the value of one or more fields and
+finds the records with that value “quickly.” In particular, an index lets us find
+a record without having to look at more than a small fraction of all possible
+records. The field(s) on whose values the index is based is called the search key,
+or just “key” if the index is understood.
+
+In this section, we introduce concepts that apply to all index structures. Storage
+structures consist of files, which are similar to the files used by operating
+systems. A data file may be used to store a relation, for example. The data file
+may have one or more index files. Each index file associates values of the search
+key with pointers to data-file records that have that value for the attribute(s)
+of the search key.
+Indexes can be “dense,” meaning there is an entry in the index file for every
+record of the data file. They can be “sparse,” meaning that only some of the
+data records are represented in the index, often one index entry per block of
+the data file. Indexes can also be “primary” or “secondary.” A primary index
+determines the location of the records of the data file, while a secondary index
+does not. For example, it is common to create a primary index on the primary
+key of a relation and to create secondary indexes on some of the other attributes.
+We conclude the section with a study of information retrieval from documents.
+The ideas of the section are combined to yield “inverted indexes,”
+which enable efficient retrieval of documents that contain one or more given
+keywords. This technique is essential for answering search queries on the Web,
+for instance.
+
+A sequential file is created by sorting the tuples of a relation by their primary
+key. The tuples are then distributed among blocks, in this order.
+
+Example:
+Fig 14.2 shows a sequential file on the right. We imagine
+that keys are integers; we show only the key field, and we make the atypical
+assumption that there is room for only two records in one block. For instance,
+the first block of the file holds the records with keys 10 and 20. In this and
+several other examples, we use integers that are sequential multiples of 10 as
+keys, although there is surely no requirement that keys form an arithmetic
+sequence.
+
+If records Eire sorted, we can build on them a dense index, which is a sequence
+of blocks holding only the keys of the records and pointers to the records themselves;
+the pointers are addresses in the sense discussed in Section 13.6. The
+index blocks of the dense index maintain these keys in the same sorted order as
+in the file itself. Since keys and pointers presumably take much less space than
+complete records, we expect to use many fewer blocks for the index than for
+the file itself. The index is especially advantageous when it, but not the data
+file, can fit in main memory. Then, by using the index, we can find any record
+given its search key, with only one disk I/O per lookup.
+
+The dense index supports queries that ask for records with a given searchkey
+value. Given key value K , we search the index blocks for K , and when we
+find it, we follow the associated pointer to the record with key K . It might
+appear that we need to examine every block of the index, or half the blocks of
+the index, on average, before we find K . However, there are several factors that
+make the index-based search more efficient than it seems.
+
+1. The number of index blocks is usually small compared with the number
+of data blocks.
+2. Since keys are sorted, we can use binary search to find K . If there are n
+blocks of the index, we only look at log2 n of them.
+3. The index may be small enough to be kept permanently in main memory
+buffers. If so, the search for key K involves only main-memory accesses,
+and there are no expensive disk I/O ’s to be performed.
+
+A sparse index typically has only one key-pointer pair per block of the data file.
+It thus uses less space than a dense index, at the expense of somewhat more
+time to find a record given its key. You can only use a sparse index if the data
+file is sorted by the search key, while a dense index can be used for any search
+key. Figure 14.3 shows a sparse index with one key-pointer per data block. The
+keys are for the first records on each data block.
